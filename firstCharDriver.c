@@ -71,4 +71,40 @@ void cleanup_module(void) {
 
 
 
+/*
+ *
+ *My functions
+ *
+ */
 
+/* 
+ * Called when a process tries to open the device file, like
+ * "cat /dev/mycharfile"
+ */
+static int device_open(struct inode* inode, struct file* file) {
+	static int counter = 0;
+
+	if(Device_Open)
+		return -EBUSY;
+
+	Device_Open++;
+	sprintf(msg, "I already told you %d times Hello world!\n", counter++);
+	msg_Ptr = msg;
+	try_module_get(THIS_MODULE); //Not sure I understand this
+
+	return SUCCESS;
+}
+
+
+/* 
+ * Called when a process closes the device file.
+ */
+
+static int device_release(struct inode* inode, struct file* file) {
+	Device_Open--;
+
+	module_put(THIS_MODULE); //Not sure I understand this
+
+	return 0;
+
+}
