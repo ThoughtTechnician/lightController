@@ -1,0 +1,1 @@
+cmd_/home/connor/class/cs3210/Project/hello-mod.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/connor/class/cs3210/Project/hello-mod.ko /home/connor/class/cs3210/Project/hello-mod.o /home/connor/class/cs3210/Project/hello-mod.mod.o
