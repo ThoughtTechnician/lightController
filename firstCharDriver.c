@@ -7,6 +7,9 @@
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
+#include <linux/device.h>
+#include <linux/cdev.h>
+#include <linux/kdev_t.h>
 
 /*
  *Prototypes 
@@ -19,6 +22,10 @@ static int device_release(struct inode*, struct file*);
 static ssize_t device_read(struct file*, char*, size_t, loff_t*);
 static ssize_t device_write(struct file*, const char*, size_t, loff_t*);
 
+#define DRIVER_AUTHOR "Connor \"El Capitan\" Reeder"
+#define DRIVER_DESC "Getting a little fancier with the kernel modules"
+#define DRIVER_LICENSE "GPL"
+
 #define SUCCESS 0
 #define DEVICE_NAME "connorsdev"
 #define BUF_LEN 80
@@ -28,7 +35,9 @@ static ssize_t device_write(struct file*, const char*, size_t, loff_t*);
  *
  */
 
-static int Major;
+static dev_t first;
+static struct cdev c_dev;
+static struct class *c1;
 static int Device_Open = 0;
 
 static char msg[BUF_LEN];
@@ -42,34 +51,41 @@ static struct file_operations fops = {
 };
 
 
-int init_module(void) {
-	Major = register_chrdev(0, DEVICE_NAME, &fops);
-
-	if(Major < 0) {
-		printk(KERN_ALERT "Registering connor\'s char device failed with %d\n", Major);
-		return Major;
+static int __init my_init(void) {
+	if (alloc_chrdev_region(&first, 0, 1, "connorsdrv") < 0)
+		return -1;
+	if ((c1 = class_create(THIS_MODULE, "chardrv")) == NULL) {
+		unregister_chrdev_region(first, 1);
+		return -1;
 	}
-
-	printk(KERN_INFO "I was assigned major number %d. To talk to\n", Major);
-	printk(KERN_INFO "the driver, create a dev file with\n");
-	printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, Major);
-	printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
-	printk(KERN_INFO "the device file.\n");
-	printk(KERN_INFO "Remove the device file and module when done.\n");
-
+	if (device_create(c1, NULL, first, NULL, DEVICE_NAME) == NULL) {
+		class_destroy(c1);
+		unregister_chrdev_region(first, 1);
+		return -1;
+	}
+	cdev_init(&c_dev, &fops);
+	if(cdev_add(&c_dev, first, 1) == -1) {
+		device_destroy(c1, first);
+		class_destroy(c1);
+		unregister_chrdev_region(first, 1);
+		return -1;
+	}
 	return SUCCESS;
 }
 
-void cleanup_module(void) {
+static void __exit my_exit(void) {
 	/*
 	 * Unregister the device
 	 */
-	int ret = unregister_chrdev(Major, DEVICE_NAME);
-	if (ret < 0)
-		printk(KERN_ALERT "Error in unregister_chrdev: %d\n", ret);
+	cdev_del(&c_dev);
+	device_destroy(c1, first);
+	class_destroy(c1);
+	unregister_chrdev_region(first,1);
+	printk(KERN_INFO "Connor just called unregister_chrdev\n");
 }	
 
-
+module_init(my_init);
+module_exit(my_exit);
 
 /*
  *
@@ -108,3 +124,35 @@ static int device_release(struct inode* inode, struct file* file) {
 	return 0;
 
 }
+/* 
+ * Called when a process, which already opened the dev file, attempts to
+ * read from it.
+ */
+static ssize_t device_read(struct file* filp, char* buffer, size_t length,
+		loff_t* offset) {
+	int bytes_read = 0;
+	if (*msg_Ptr == 0)
+		return 0;
+
+	while(length && *msg_Ptr) {
+		put_user(*(msg_Ptr++), buffer++);
+		length--;
+		bytes_read++;
+	}
+
+	return bytes_read;
+}
+
+/*  
+ * Called when a process writes to dev file: echo "hi" > /dev/hello 
+ */
+static ssize_t device_write(struct file* filp, const char* buff, size_t len,
+		loff_t* off) {
+	printk(KERN_ALERT "Sorry, this operation is not supported by connor\n");
+	return -EINVAL;
+}
+
+MODULE_LICENSE(DRIVER_LICENSE);
+MODULE_AUTHOR(DRIVER_AUTHOR);
+MODULE_DESCRIPTION(DRIVER_DESC);
+
