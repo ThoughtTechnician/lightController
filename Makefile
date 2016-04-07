@@ -2,6 +2,7 @@
 obj-m += hello-mod.o
 obj-m += second-mod.o
 obj-m += firstCharDriver.o
+obj-m += capsLockLedDriver.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
