@@ -55,5 +55,7 @@ int fd; /* File descriptor for console (/dev/tty/) */
               usleep(150000);
 	  }*/
 printf("KDGETLED: %d\n", arg);
+char* test = "test";
+printf("here: %s\n", test);
 return SUCCESS;
 }

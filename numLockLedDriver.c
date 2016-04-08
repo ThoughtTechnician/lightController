@@ -19,10 +19,10 @@
 
 #define DRIVER_AUTHOR "Connor \"El Capitan\" Reeder"
 #define DRIVER_LICENSE "GPL"
-#define DRIVER_DESC "A driver kernel module which allows activation and deactivation of the caps lock light"
-#define DEVICE_NAME "capslight"
-#define DRIVER_NAME "lightdrv"
-#define DEVICE_PATH "/dev/capslight"
+#define DRIVER_DESC "A driver kernel module which allows activation and deactivation of the num lock light"
+#define DEVICE_NAME "numlight"
+#define DRIVER_NAME "numdrv"
+#define DEVICE_PATH "/dev/numlight"
 
 #define SUCCESS 0
 #define BUF_LEN 80
@@ -37,9 +37,8 @@ static ssize_t light_write(struct file*, const char*, size_t, loff_t*);
  *Global variables to be used only within this file
  */
 
-static dev_t devices[2];
-static struct cdev c_dev_cap;
-static struct cdev c_dev_num;
+static dev_t first;
+static struct cdev c_dev;
 static struct class* c1;
 static int Light_Open = 0;
 
@@ -47,12 +46,12 @@ static int Light_Open = 0;
 
 static int result;
 static mm_segment_t oldfs;
-static struct file* capsFile;
-static struct file* numFile;
 static struct file* f;
 
 
 
+//static char msg[BUF_LEN];
+//static char* msg_Ptr;
 
 static struct file_operations fops = {
 	.read = light_read,
@@ -62,50 +61,27 @@ static struct file_operations fops = {
 };
 
 static int __init light_init(void) {
-	if (alloc_chrdev_region(&devices[0], 0, 1, DRIVER_NAME) < 0)
+	if (alloc_chrdev_region(&first, 0, 1, DRIVER_NAME) < 0)
 		return -1;
-	if (alloc_chrdev_region(&devices[1], 0, 1, DRIVER_NAME) < 0){
-		unregister_chrdev_region(devices[0], 1);
-		return -1;
-	}
-	if ((c1 = class_create(THIS_MODULE, "chardrv")) == NULL) {
-		unregister_chrdev_region(devices[0], 1);
+	if ((c1 = class_create(NULL, "chardrv")) == NULL) {
+		unregister_chrdev_region(first, 1);
 		return -1;
 	}
-	if (device_create(c1, NULL, devices[0], NULL, "capslight") == NULL) {
+	if (device_create(c1, NULL, first, NULL, DEVICE_NAME) == NULL) {
 		class_destroy(c1);
-		unregister_chrdev_region(devices[0], 1);
-		unregister_chrdev_region(devices[1], 1);
+		unregister_chrdev_region(first, 1);
 		return -1;
 	}
-	if (device_create(c1, NULL, devices[1], NULL, "numlight") == NULL) {
+	cdev_init(&c_dev, &fops);
+	if(cdev_add(&c_dev, first, 1) == -1) {
+		device_destroy(c1, first);
 		class_destroy(c1);
-		device_destroy(c1, devices[1]);
-		unregister_chrdev_region(devices[0], 1);
-		unregister_chrdev_region(devices[1], 1);
+		unregister_chrdev_region(first, 1);
 		return -1;
 	}
-	cdev_init(&c_dev_cap, &fops);
-	if(cdev_add(&c_dev_cap, devices[0], 1) == -1) {
-		device_destroy(c1, devices[0]);
-		device_destroy(c1, devices[1]);
-		class_destroy(c1);
-		unregister_chrdev_region(devices[0], 2);
-		return -1;
-	}
-	cdev_init(&c_dev_num, &fops);
-	if(cdev_add(&c_dev_num, devices[1], 1) == -1) { //double check this
-		device_destroy(c1, devices[0]);
-		device_destroy(c1, devices[1]);
-		class_destroy(c1);
-		unregister_chrdev_region(devices[0], 2);//all this
-		return -1;
-	}
-	capsFile = filp_open("/sys/class/leds/input0::capslock/brightness",
+	f = filp_open("/sys/class/leds/input0::numlock/brightness",
 			O_RDWR, 0666);
-	numFile = filp_open("/sys/class/leds/input0::numlock/brightness",
-			O_RDWR, 0666);
-	f = capsFile;
+
 	return SUCCESS;
 }
 
@@ -113,16 +89,11 @@ static void __exit light_exit(void) {
 	/*
 	 * Unregister the device
 	 */
-	printk(KERN_INFO "before\n");
-	cdev_del(&c_dev_cap);
-	printk(KERN_INFO "afer\n");
-	cdev_del(&c_dev_num);
-	device_destroy(c1, devices[0]);
-	device_destroy(c1, devices[1]);
+	cdev_del(&c_dev);
+	device_destroy(c1, first);
 	class_destroy(c1);
-	unregister_chrdev_region(devices[0],1);
-	unregister_chrdev_region(devices[1],1);
-	printk(KERN_INFO "Just unregistered the caps and num lights\n");
+	unregister_chrdev_region(first,1);
+	printk(KERN_INFO "Just unregistered the num lock light\n");
 }
 
 module_init(light_init);
@@ -142,24 +113,6 @@ static int light_open(struct inode* inode, struct file* file){
 
 	Light_Open++;
 	try_module_get(THIS_MODULE);
-
-	//struct scull_dev *dev;
-	//dev = container_of(inode->i_cdev, struct scull_dev, cdev);
-	//file->private_data = dev;
-	//caps light
-	if (inode->i_cdev->dev == devices[0]) {
-		//printk(KERN_INFO "Caps Light opened!\n");
-		f = capsFile;
-	}
-	//num light       
-	else if (inode->i_cdev->dev == devices[1]){
-		//printk(KERN_INFO "Num light opened!\n");
-		f = numFile;
-	} else {
-		printk(KERN_INFO "Some other light is being written to!\n");
-		return -1;
-	}
-
 	return SUCCESS;
 }
 

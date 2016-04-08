@@ -1,4 +1,2 @@
-kernel//home/connor/class/cs3210/Project/hello-mod.ko
-kernel//home/connor/class/cs3210/Project/second-mod.ko
-kernel//home/connor/class/cs3210/Project/firstCharDriver.ko
 kernel//home/connor/class/cs3210/Project/capsLockLedDriver.ko
+kernel//home/connor/class/cs3210/Project/numLockLedDriver.ko

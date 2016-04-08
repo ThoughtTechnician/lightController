@@ -1,1 +1,0 @@
-cmd_/home/connor/class/cs3210/Project/second-mod.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/connor/class/cs3210/Project/second-mod.ko /home/connor/class/cs3210/Project/second-mod.o /home/connor/class/cs3210/Project/second-mod.mod.o
