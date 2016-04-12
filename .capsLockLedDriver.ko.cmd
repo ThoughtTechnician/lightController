@@ -1,1 +1,0 @@
-cmd_/home/connor/class/cs3210/Project/capsLockLedDriver.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/connor/class/cs3210/Project/capsLockLedDriver.ko /home/connor/class/cs3210/Project/capsLockLedDriver.o /home/connor/class/cs3210/Project/capsLockLedDriver.mod.o

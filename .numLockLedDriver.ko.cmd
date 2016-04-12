@@ -1,1 +1,0 @@
-cmd_/home/connor/class/cs3210/Project/numLockLedDriver.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/connor/class/cs3210/Project/numLockLedDriver.ko /home/connor/class/cs3210/Project/numLockLedDriver.o /home/connor/class/cs3210/Project/numLockLedDriver.mod.o

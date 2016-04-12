@@ -1,0 +1,1 @@
+cmd_/home/connor/class/cs3210/Project/lightController.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/connor/class/cs3210/Project/lightController.ko /home/connor/class/cs3210/Project/lightController.o /home/connor/class/cs3210/Project/lightController.mod.o
