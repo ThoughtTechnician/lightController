@@ -101,6 +101,7 @@ static int __init light_init(void) {
 	}
 	capsFile = filp_open("/sys/class/leds/input0::capslock/brightness",
 			O_RDWR, 0666);
+
 	numFile = filp_open("/sys/class/leds/input0::numlock/brightness",
 			O_RDWR, 0666);
 	f = capsFile;
@@ -134,15 +135,21 @@ module_exit(light_exit);
 
 static int light_open(struct inode* inode, struct file* file){
 
+	printk(KERN_INFO "Bootup capsFile: %p\n", capsFile);
+	printk(KERN_INFO "Bootup numFile: %p\n", numFile);
 	Light_Open++;
 	try_module_get(THIS_MODULE);
 
 	if (inode->i_cdev->dev == devices[0]) {
 		//printk(KERN_INFO "Caps Light opened!\n");
+		if (!capsFile)
+			return -1;
 	}
 	//num light       
 	else if (inode->i_cdev->dev == devices[1]){
 		//printk(KERN_INFO "Num light opened!\n");
+		if (!numFile)
+			return -1;
 	} else {
 		printk(KERN_INFO "Some other light is being written to!\n");
 		return -1;
@@ -156,7 +163,7 @@ static int light_release(struct inode* inode, struct file* file) {
 	module_put(THIS_MODULE);
 	return SUCCESS;
 }
-static ssize_t light_read(struct file* filp, char* buffer, size_t length,
+static ssize_t light_read(struct file* file, char* buffer, size_t length,
 		loff_t* offset){
 
 	char kbuf[2] = {0,'\n'};
@@ -164,6 +171,14 @@ static ssize_t light_read(struct file* filp, char* buffer, size_t length,
 	if (*offset > 0)
 		return 0;
 
+	//capslight
+	if (file->f_inode->i_cdev->dev == devices[0]) {
+		f = capsFile;
+	}
+	//num light       
+	else if (file->f_inode->i_cdev->dev == devices[1]){
+		f = numFile;
+	} 
 
     	oldfs = get_fs();
 	set_fs(KERNEL_DS);

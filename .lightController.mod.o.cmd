@@ -7,9 +7,9 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   include/linux/module.h \
     $(wildcard include/config/modules.h) \
     $(wildcard include/config/sysfs.h) \
+    $(wildcard include/config/modules/tree/lookup.h) \
     $(wildcard include/config/unused/symbols.h) \
     $(wildcard include/config/module/sig.h) \
-    $(wildcard include/config/modules/tree/lookup.h) \
     $(wildcard include/config/generic/bug.h) \
     $(wildcard include/config/kallsyms.h) \
     $(wildcard include/config/smp.h) \
@@ -102,7 +102,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/vm86.h) \
   arch/x86/include/uapi/asm/processor-flags.h \
   arch/x86/include/asm/paravirt_types.h \
-    $(wildcard include/config/x86/local/apic.h) \
     $(wildcard include/config/pgtable/levels.h) \
     $(wildcard include/config/x86/pae.h) \
     $(wildcard include/config/queued/spinlocks.h) \
@@ -126,6 +125,7 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   include/asm-generic/ptrace.h \
   arch/x86/include/asm/cpufeature.h \
     $(wildcard include/config/x86/feature/names.h) \
+    $(wildcard include/config/x86/fast/feature/tests.h) \
     $(wildcard include/config/x86/debug/static/cpu/has.h) \
   arch/x86/include/asm/required-features.h \
     $(wildcard include/config/x86/minimum/cpu/family.h) \
@@ -141,6 +141,7 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/x86/ppro/fence.h) \
   arch/x86/include/asm/nops.h \
     $(wildcard include/config/mk7.h) \
+  include/asm-generic/barrier.h \
   include/asm-generic/bitops/find.h \
     $(wildcard include/config/generic/find/first/bit.h) \
   include/asm-generic/bitops/sched.h \
@@ -218,6 +219,7 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   include/asm-generic/memory_model.h \
     $(wildcard include/config/discontigmem.h) \
     $(wildcard include/config/sparsemem/vmemmap.h) \
+  include/linux/pfn.h \
   include/asm-generic/getorder.h \
   arch/x86/include/asm/processor.h \
     $(wildcard include/config/m486.h) \
@@ -252,6 +254,18 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   arch/x86/include/uapi/asm/ioctl.h \
   include/asm-generic/ioctl.h \
   include/uapi/asm-generic/ioctl.h \
+  arch/x86/include/asm/atomic.h \
+  arch/x86/include/asm/cmpxchg.h \
+  arch/x86/include/asm/cmpxchg_64.h \
+  arch/x86/include/asm/atomic64_64.h \
+  include/linux/tracepoint-defs.h \
+  include/linux/atomic.h \
+    $(wildcard include/config/generic/atomic64.h) \
+  include/asm-generic/atomic-long.h \
+  include/linux/static_key.h \
+  include/linux/jump_label.h \
+    $(wildcard include/config/jump/label.h) \
+  arch/x86/include/asm/jump_label.h \
   arch/x86/include/asm/paravirt.h \
   arch/x86/include/asm/special_insns.h \
   arch/x86/include/asm/fpu/types.h \
@@ -267,13 +281,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/irqsoff/tracer.h) \
     $(wildcard include/config/trace/irqflags/support.h) \
   arch/x86/include/asm/irqflags.h \
-  include/linux/atomic.h \
-    $(wildcard include/config/generic/atomic64.h) \
-  arch/x86/include/asm/atomic.h \
-  arch/x86/include/asm/cmpxchg.h \
-  arch/x86/include/asm/cmpxchg_64.h \
-  arch/x86/include/asm/atomic64_64.h \
-  include/asm-generic/atomic-long.h \
   include/linux/bottom_half.h \
   include/linux/spinlock_types.h \
   include/linux/lockdep.h \
@@ -281,9 +288,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/lock/stat.h) \
   include/linux/rwlock_types.h \
   arch/x86/include/asm/spinlock.h \
-  include/linux/jump_label.h \
-    $(wildcard include/config/jump/label.h) \
-  arch/x86/include/asm/jump_label.h \
   arch/x86/include/asm/qspinlock.h \
   include/asm-generic/qspinlock.h \
   arch/x86/include/asm/qrwlock.h \
@@ -333,20 +337,22 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/numa.h) \
     $(wildcard include/config/deferred/struct/page/init.h) \
     $(wildcard include/config/pm/sleep.h) \
+    $(wildcard include/config/memory/isolation.h) \
+    $(wildcard include/config/compaction.h) \
     $(wildcard include/config/cma.h) \
   include/linux/mmdebug.h \
     $(wildcard include/config/debug/vm.h) \
+    $(wildcard include/config/debug/vm/pgflags.h) \
   include/linux/mmzone.h \
     $(wildcard include/config/force/max/zoneorder.h) \
-    $(wildcard include/config/memory/isolation.h) \
     $(wildcard include/config/memcg.h) \
     $(wildcard include/config/zone/device.h) \
     $(wildcard include/config/memory/hotplug.h) \
-    $(wildcard include/config/compaction.h) \
     $(wildcard include/config/flat/node/mem/map.h) \
     $(wildcard include/config/page/extension.h) \
     $(wildcard include/config/no/bootmem.h) \
     $(wildcard include/config/numa/balancing.h) \
+    $(wildcard include/config/transparent/hugepage.h) \
     $(wildcard include/config/have/memory/present.h) \
     $(wildcard include/config/have/memoryless/nodes.h) \
     $(wildcard include/config/need/node/memmap/size.h) \
@@ -420,6 +426,7 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   include/linux/workqueue.h \
     $(wildcard include/config/debug/objects/work.h) \
     $(wildcard include/config/freezer.h) \
+    $(wildcard include/config/wq/watchdog.h) \
   include/linux/timer.h \
     $(wildcard include/config/timer/stats.h) \
     $(wildcard include/config/debug/objects/timers.h) \
@@ -431,6 +438,7 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   arch/x86/include/asm/mmzone.h \
   arch/x86/include/asm/mmzone_64.h \
   arch/x86/include/asm/smp.h \
+    $(wildcard include/config/x86/local/apic.h) \
     $(wildcard include/config/x86/io/apic.h) \
     $(wildcard include/config/x86/32/smp.h) \
     $(wildcard include/config/debug/nmi/selftest.h) \
@@ -467,7 +475,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/pm/clk.h) \
     $(wildcard include/config/pm/generic/domains.h) \
   arch/x86/include/asm/fixmap.h \
-    $(wildcard include/config/paravirt/clock.h) \
     $(wildcard include/config/provide/ohci1394/dma/init.h) \
     $(wildcard include/config/pci/mmconfig.h) \
     $(wildcard include/config/x86/intel/mid.h) \
@@ -506,12 +513,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   arch/x86/include/asm/xen/hypervisor.h \
   include/xen/features.h \
   include/xen/interface/features.h \
-  arch/x86/include/asm/pvclock.h \
-  include/linux/clocksource.h \
-    $(wildcard include/config/arch/clocksource/data.h) \
-    $(wildcard include/config/clocksource/watchdog.h) \
-    $(wildcard include/config/clksrc/probe.h) \
-  arch/x86/include/asm/clocksource.h \
   arch/x86/include/uapi/asm/vsyscall.h \
   include/asm-generic/fixmap.h \
   arch/x86/include/asm/idle.h \
@@ -529,7 +530,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
   include/linux/percpu.h \
     $(wildcard include/config/need/per/cpu/embed/first/chunk.h) \
     $(wildcard include/config/need/per/cpu/page/first/chunk.h) \
-  include/linux/pfn.h \
   include/linux/elf.h \
   arch/x86/include/asm/elf.h \
     $(wildcard include/config/x86/x32/abi.h) \
@@ -543,7 +543,6 @@ deps_/home/connor/class/cs3210/Project/lightController.mod.o := \
     $(wildcard include/config/arch/enable/split/pmd/ptlock.h) \
     $(wildcard include/config/have/cmpxchg/double.h) \
     $(wildcard include/config/have/aligned/struct/page.h) \
-    $(wildcard include/config/transparent/hugepage.h) \
     $(wildcard include/config/userfaultfd.h) \
     $(wildcard include/config/aio.h) \
     $(wildcard include/config/mmu/notifier.h) \
